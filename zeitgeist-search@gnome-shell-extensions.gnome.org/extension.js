@@ -70,27 +70,17 @@ function enable() {
 }
 
 function disable() {
+    var searchProviders = Main.overview._viewSelector._searchTab._searchSystem._providers;
     
+    for (var i = 0; i < searchProviders.length; i++) {
+        log(searchProviders[i].title);
+        Main.overview._viewSelector._searchTab.removeSearchProvider(searchProviders[i]);
+        i--;
+    }
+    this.addSearchProvider(new AppDisplay.AppSearchProvider());
+    this.addSearchProvider(new AppDisplay.SettingsSearchProvider());
+    this.addSearchProvider(new PlaceDisplay.PlaceSearchProvider());
+    this.addSearchProvider(new DocDisplay.DocSearchProvider());
+    this.addSearchProvider(new ContactDisplay.ContactSearchProvider());
 }
 
-// TODO
-//
-// * Make icons reactive; single-click or right-click to get a Largo-like set of actions; double-click to launch
-//     Open with...
-//     Show in file manager
-//     --------------------
-//     Remove from journal
-//     Move to trash
-//
-// * Sort events when we get them (hmm, maybe Zeitgeist already does that for us)
-//
-// * isearch like in Emacs
-//
-// * Big Fat Eraser mode, like in gnome-activity-journal
-//
-
-// Each Query will generate a ResultSection
-//
-// Each ResultSection has a JournalLayout, which is populated by a LayoutBy*
-//
-// MAKE A DRAWING OF THIS - does it look pretty?
