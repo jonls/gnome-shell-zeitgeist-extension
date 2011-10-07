@@ -35,6 +35,8 @@ const C_ = Gettext.pgettext;
 
 const ContactDisplay = imports.ui.contactDisplay;
 const PlaceDisplay = imports.ui.placeDisplay;
+const AppDisplay = imports.ui.appDisplay;
+const DocDisplay = imports.ui.docDisplay;
 
 const Extension = imports.ui.extensionSystem.extensions["zeitgeist-search@gnome-shell-extensions.gnome.org"];
 
@@ -77,10 +79,10 @@ function disable() {
         Main.overview._viewSelector._searchTab.removeSearchProvider(searchProviders[i]);
         i--;
     }
-    this.addSearchProvider(new AppDisplay.AppSearchProvider());
-    this.addSearchProvider(new AppDisplay.SettingsSearchProvider());
-    this.addSearchProvider(new PlaceDisplay.PlaceSearchProvider());
-    this.addSearchProvider(new DocDisplay.DocSearchProvider());
-    this.addSearchProvider(new ContactDisplay.ContactSearchProvider());
+    Main.overview._viewSelector.addSearchProvider(new AppDisplay.AppSearchProvider());
+    Main.overview._viewSelector.addSearchProvider(new AppDisplay.SettingsSearchProvider());
+    Main.overview._viewSelector.addSearchProvider(new PlaceDisplay.PlaceSearchProvider());
+    Main.overview._viewSelector.addSearchProvider(new DocDisplay.DocSearchProvider());
+    Main.overview._viewSelector.addSearchProvider(new ContactDisplay.ContactSearchProvider());
 }
 
