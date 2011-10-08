@@ -1,17 +1,11 @@
 /* Journal */
 
-.journal {
-    item-spacing: 24px;
-    row-spacing: 24px;
-    padding: 0px 9px 0px 0px;
-    color: white;
-}
-
 .journal-item {
     /* copied from app-well-app */
     border-radius: 4px;
+    spacing: 6px;
     padding: 3px;
-    border: 1px rgba(0,0,0,0);
+    border: 6px
     font-size: 7.5pt;
     color: white;
     transition-duration: 100;
@@ -36,30 +30,17 @@
 }
 
 .journal-heading {
-    font-size: 12pt;
-    font-weight: bold;
-    /* text-shadow: black 0px 2px 2px;
-    /*background-image: url("filter-selected-rtl.svg");*/
+    padding: 1px 1px 6px 6px;
+    spacing: 4px;
+    color: #6f6f6f;
+    font-size: .8em;
 }
 
-.journal-box {
-    color: black;
-    background-color: rgba(255,255,255,0.5);
-    border-radius: 0.25em;
-    padding: 3px 1.00em;
-}
-
-.journal-more {
-    font-size: 10pt;
-    font-weight: bold;
-    color: #000;
-}
-
-.journal-more:hover {
+.journal-heading:hover {
     color: #fff;
 }
 
-.sub-journal {
-    padding: 0px 0px 21px 0px;
-    color: white;
+.journal-heading-box {
+    padding: 9px 0px 4px 0px;
 }
+
