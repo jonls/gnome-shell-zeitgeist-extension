@@ -8,19 +8,6 @@
  * whose data comes from what is logged in the Zeitgeist service.
  */
 
-/* Style classes used here:
- *
- * journal - The main journal layout
- *     item-spacing - Horizontal space between items in the journal view
- *     row-spacing - Vertical space between rows in the journal view
- *
- * journal-heading - Heading labels for date blocks inside the journal
- *
- * .journal-item .overview-icon - Items in the journal, used to represent files/documents/etc.
- * You can style "icon-size", "font-size", etc. in them; the hierarchy for each item is
- * is StButton -> IconGrid.BaseIcon
- */
-
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
