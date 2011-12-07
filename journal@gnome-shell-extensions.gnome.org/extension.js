@@ -1342,7 +1342,7 @@ JournalDisplay.prototype = {
         this._addCategory(new PicturesCategory(), true);
         this._addCategory(new DownloadsCategory(), true);
         //this._addCategory(new ConversationsCategory());
-        this._addCategory(new MailCategory(), true);
+        //this._addCategory(new MailCategory(), true);
         this._addCategory(new OtherCategory(), true);
     },
     
