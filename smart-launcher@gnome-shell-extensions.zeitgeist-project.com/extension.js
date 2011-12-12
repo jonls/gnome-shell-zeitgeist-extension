@@ -68,7 +68,7 @@ function populateDash (events) {
 
 function prepareQuery () {
     if (isDirty == true) {
-        Zeitgeist.findEvents([new Date().getTime() - 86400000, Zeitgeist.MAX_TIMESTAMP],
+        Zeitgeist.findEvents([new Date().getTime() - 1800000, Zeitgeist.MAX_TIMESTAMP],
                              [],
                              Zeitgeist.StorageState.ANY,
                              20,
