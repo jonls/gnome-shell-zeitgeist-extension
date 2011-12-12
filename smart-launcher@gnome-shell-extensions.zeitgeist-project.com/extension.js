@@ -86,7 +86,7 @@ function enable () {
     favs = appFav._getIds();
     appSystem = Main.overview._dash._appSystem;
     signalId1 = Main.overview.connect('showing', function () {
-        prepareQuery(); prepareQuery(); isDirty = false; });
+        prepareQuery();});
     signalId2 = appSystem.connect_after('installed-changed', Lang.bind(this,
         function () {isDirty = true; prepareQuery(); }));
     signalId3 = appFav.connect('changed', Lang.bind(this,
