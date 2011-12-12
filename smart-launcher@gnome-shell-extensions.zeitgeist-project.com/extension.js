@@ -61,14 +61,17 @@ function populateDash (events) {
         recentApps.push(item.item.actor);
         if (i  == 1) break;
     }
-    
     Main.overview._dash._adjustIconSize();
     Main.overview._dash._box.show_all();
 }
 
 function prepareQuery () {
+    var today = new Date()
+    var now = today.getTime()
+    var offset = -today.getTimezoneOffset()*60*1000
+    now = now - offset;
     if (isDirty == true) {
-        Zeitgeist.findEvents([new Date().getTime() - 1800000, Zeitgeist.MAX_TIMESTAMP],
+        Zeitgeist.findEvents([now - 15*60*1000, Zeitgeist.MAX_TIMESTAMP],
                              [],
                              Zeitgeist.StorageState.ANY,
                              20,
@@ -83,7 +86,7 @@ function enable () {
     favs = appFav._getIds();
     appSystem = Main.overview._dash._appSystem;
     signalId1 = Main.overview.connect('showing', function () {
-        prepareQuery(); isDirty = false; });
+        prepareQuery(); prepareQuery(); isDirty = false; });
     signalId2 = appSystem.connect_after('installed-changed', Lang.bind(this,
         function () {isDirty = true; prepareQuery(); }));
     signalId3 = appFav.connect('changed', Lang.bind(this,
