@@ -71,7 +71,7 @@ function prepareQuery () {
     var offset = -today.getTimezoneOffset()*60*1000
     now = now - offset;
     if (isDirty == true) {
-        Zeitgeist.findEvents([now - 15*60*1000, Zeitgeist.MAX_TIMESTAMP],
+        Zeitgeist.findEvents([now - 60*60*1000, Zeitgeist.MAX_TIMESTAMP],
                              [],
                              Zeitgeist.StorageState.ANY,
                              20,
