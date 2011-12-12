@@ -1,5 +1,5 @@
 {
-  "description": "Add 2 most recently used apps within the last hour that are not favorited to the launcher, it required Zeitgeist to be installed", 
+  "description": "Add 2 most recently used apps within the last day that are not favorited to the launcher, it required Zeitgeist to be installed", 
   "name": "Smart Launcher", 
   "shell-version": [ "3.2" ], 
   "url": "http://git.gnome.org/gnome-shell-extensions",
