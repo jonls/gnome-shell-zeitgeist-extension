@@ -18,11 +18,14 @@ let signalId4 = null;
 
 function populateDash (events) {
     var actors = [];
-    var allApps = appSystem.get_all();
+    favs = [];
+    var allApps = appSystem.get_running();
+    var favApps  = appFav._getIds();
     for (var i = 0; i < allApps.length; i++) {
-        if (allApps[i].get_state() > 0) {
-            favs.push(allApps[i].get_id());
-        }
+        favs.push(allApps[i].get_id());
+    }
+    for (var i = 0; i < favApps.length; i++) {
+        favs.push(favApps[i]);
     }
     var blackList = [];
     blackList.push("gnome-shell.desktop");
@@ -86,13 +89,13 @@ function enable () {
     favs = appFav._getIds();
     appSystem = Main.overview._dash._appSystem;
     signalId1 = Main.overview.connect('showing', function () {
-        prepareQuery();});
+        prepareQuery(); prepareQuery(); isDirty = false; });
     signalId2 = appSystem.connect_after('installed-changed', Lang.bind(this,
-        function () {isDirty = true; prepareQuery(); }));
+        function () {isDirty = true; prepareQuery(); isDirty = false;}));
     signalId3 = appFav.connect('changed', Lang.bind(this,
         function () {
             favs = appFav._getIds();
-            isDirty = true; prepareQuery(); }));
+            isDirty = true; prepareQuery(); isDirty = false;}));
     signalId4 = appSystem.connect('app-state-changed', Lang.bind(this,
         function () {isDirty = true; prepareQuery(); }));
 }
