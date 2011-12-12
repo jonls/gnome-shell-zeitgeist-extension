@@ -1,5 +1,5 @@
 {
- "uuid": "journal@gnome-shell-extensions.gnome.org",
+ "uuid": "journal@gnome-shell-extensions.zeitgeist-project.com",
  "name": "Journal",
  "description": "Zeitgeist based activity-history journal as a gnome-shell overview tab. It requires Zeitgeist to be installed.",
  "shell-version": [ "3.2" ],

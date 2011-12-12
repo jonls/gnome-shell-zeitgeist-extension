@@ -17,7 +17,7 @@ const Signals = imports.signals;
 const St = imports.gi.St;
 const Mainloop = imports.mainloop;
 
-const Extension = imports.ui.extensionSystem.extensions["jump-lists@gnome-shell-extensions.gnome.org"];
+const Extension = imports.ui.extensionSystem.extensions["jump-lists@gnome-shell-extensions.zeitgeist-project.com"];
 
 const PopupMenu = imports.ui.popupMenu;
 const AppDisplay = imports.ui.appDisplay;

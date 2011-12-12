@@ -36,17 +36,16 @@ const _ = Gettext.gettext;
 const C_ = Gettext.pgettext;
 const Tp = imports.gi.TelepathyGLib;
 
-const Extension = imports.ui.extensionSystem.extensions["journal@gnome-shell-extensions.gnome.org"];
+const Extension = imports.ui.extensionSystem.extensions["journal@gnome-shell-extensions.zeitgeist-project.com"];
 
 const IconGrid = imports.ui.iconGrid;
-//const IconGrid = Extension.iconGrid;
 const PopupMenu = imports.ui.popupMenu;
 const Main = imports.ui.main;
 const Util = imports.misc.util;
 const DocInfo = Extension.docInfo;
 const Semantic = Extension.semantic;
 const Zeitgeist = Extension.zeitgeist;
-const Calendar = Extension.calendar;
+const ViewSelector = imports.ui.viewSelector;
 
 
 //*** JournalLayout ***
@@ -110,213 +109,6 @@ function EventItem (event, multi_select, journal_layout) {
     this._init (event, multi_select, journal_layout);
 }
 
-/*
-EventItem.prototype = {
-    _init: function (event, multi_select, journal_layout) {
-        if (!event)
-            throw new Error ("event must not be null");
-
-        this.multiSelect = multi_select;
-
-        this._journal_layout = journal_layout;
-        this._item_info = new DocInfo.ZeitgeistItemInfo (event);
-        this._icon = new IconGrid.BaseIcon (this._item_info.name,
-                                            { createIcon: Lang.bind (this, function (size) {
-                                                  return this._item_info.createIcon (size);
-                                              })
-                                            });
-
-        this.actor = new St.Group ({ reactive: true});
-        this.actor.connect('enter-event', Lang.bind(this, this._onEnter));
-        this.actor.connect('leave-event', Lang.bind(this, this._onLeave)); 
-
-        this._button = new St.Button ({ style_class: "journal-item",
-                                        reactive: true,
-                                        can_focus: true,
-                                        button_mask: St.ButtonMask.ONE | St.ButtonMask.THREE, // assume button 2 (middle) does nothing
-                                        x_fill: true,
-                                        y_fill: true });
-        this._button.set_child (this._icon.actor);
-        this._button.connect ('clicked', Lang.bind(this, this._onButtonPress));
-
-        this._closeButton = new St.Button ({ style_class: "window-close" });
-        this._closeButton.connect ('clicked', Lang.bind(this, this._removeItem));
-        this._closeButton.connect ('style-changed',
-                                         Lang.bind(this, this._onStyleChanged));
-
-        this._label = new St.Label ({ text: this._item_info.name, style_class: "journal-item-label"});
-        this._timestamp = formatDate(new Date(event.timestamp), '%H:%m:%s');
-        
-        this.actor.add_actor (this._button);
-        this.actor.add_actor (this._closeButton);
-        this.actor.add_actor (this._label);
-       
-        this._closeButton.hide();
-
-        this._idleToggleCloseId = 0;
-        this._menuTimeoutId = 0;
-        this._menuDown = 0;
-
-        this._menu = null;
-        this._menuManager = new PopupMenu.PopupMenuManager(this);
-
-        this._label.clutter_text.line_wrap = true;
-        this._label.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
-        this._label.clutter_text.ellipsize = Pango.EllipsizeMode.END;
-        
-        this._label.clutter_text.set_max_length(40);
-        
-        this._label.x = 78;
-    },
-
-    _onDestroy: function() {
-        //if (this._journalLayout != undefined)
-        //    this._journalLayout.removeHSpace(this);
-    },
-
-    _removeMenuTimeout: function() {
-        if (this._menuTimeoutId > 0) {
-            Mainloop.source_remove(this._menuTimeoutId);
-            this._menuTimeoutId = 0;
-        }
-    },
-
-    // callback for this._button's "clicked" signal
-    _onButtonPress: function (actor, button) {
-        this._removeMenuTimeout();
-        if (button == 1) {
-            let modifiers = Shell.get_event_state(Clutter.get_current_event ());
-            if (modifiers & Clutter.ModifierType.CONTROL_MASK) {
-                this.multiSelect.select (this._button, this._item_info);
-            } else {
-                let elements = this.multiSelect.querySelections ();
-                this._launchAll(elements);
-            }
-        } else if (button == 3) {
-            this._popupMenu();
-            this._idleToggleCloseButton ();
-        }
-        return true;
-    },
-
-    _launchAll: function(elements) {
-        if (elements.length > 1) {
-            for (let i = 0; i < elements.length; i++) {
-                let e = elements[i];
-                if (e.item.subject.interpretation == Semantic.NMO_IMMESSAGE)
-                    Util.spawn(['empathy', e.item.subject.uri]);
-                else
-                    e.item.launch ();
-            }
-            this.multiSelect.destroy ();
-        } else {
-            if (this._item_info.subject.interpretation == Semantic.NMO_IMMESSAGE)
-                Util.spawn(['empathy', this._item_info.subject.uri]);
-            else
-                this._item_info.launch ();
-            Main.overview.hide ();
-        }
-    },
-
-    _onEnter: function() {
-        this._closeButton.show();
-    },
-    
-    _onLeave: function() {
-        if (this._idleToggleCloseId == 0)
-            this._idleToggleCloseId = Mainloop.timeout_add(10, Lang.bind(this, this._idleToggleCloseButton));
-    },
-
-    _idleToggleCloseButton: function() {
-        this._idleToggleCloseId = 0;
-        if ((!this._button.has_pointer &&
-              !this._closeButton.has_pointer) ||
-              this._menu)
-            this._closeButton.hide();
-
-        return false;
-    },
-
-    // FIXME: Calculate (X) positions.
-    _updatePosition: function () {
-        let closeNode = this._closeButton.get_theme_node();
-        this._closeButton._overlap = closeNode.get_length('-shell-close-overlap');
-
-        let [buttonX, buttonY] = this._button.get_position();
-        let [buttonWidth, buttonHeight] = this._button.get_size();
-        
-        buttonWidth = buttonWidth - 14 //this.actor.scale_x * (buttonWidth - 16);
-        buttonHeight = buttonHeight - 12 //this.actor.scale_y * (buttonHeight - 16);
-        
-        //this._label.x = buttonWidth - 250
-        
-        //this._closeButton.y = buttonY - (this._closeButton.height - this._closeButton._overlap);
-        this._closeButton.x = buttonX + (buttonWidth - this._closeButton._overlap);
-        
-        
-        let [buttonWidth, buttonHeight] = this._button.get_size();
-        let [labelWidth, labelHeight] = this._label.get_size();
-        if (buttonHeight > 0 && labelHeight > 0)
-            this._label.y = 32;
-    },
-
-    _removeItem: function () {
-        this.actor.connect('destroy', Lang.bind(this, this._onDestroy)); 
-        _deleteEvents(this._item_info.name);
-        this.multiSelect.unselect (this._button, this._item_info);
-        this._journal_layout.removeItem(this);
-        this._journal_layout.refresh();
-        this.actor.destroy();
-    },
-
-    destroy: function (source, item) {
-    },
-
-    _onStyleChanged: function () {
-        this._updatePosition ();
-        this._closeButton.set_position (Math.floor(this._closeButton.x), Math.floor(this._closeButton.y));
-    },
-
-    _popupMenu: function() {
-        this._removeMenuTimeout();
-        this._button.fake_release();
-        if (!this._menu) {
-            this._menu = new ActivityIconMenu(this);
-            this._menu.connect('activate-window', Lang.bind(this, function (menu, window) {
-                this.activateWindow(window);
-            }));
-            this._menu.connect('popup', Lang.bind(this, function (menu, isPoppedUp) {
-                if (!isPoppedUp)
-                    this._onMenuPoppedDown();
-            }));
-            Main.overview.connect('hiding', Lang.bind(this, function () { this._menu.close(); }));
-
-            this._menuManager.addMenu(this._menu);
-        }
-
-        this._button.set_hover(true);
-        this._button.show_tooltip();
-        this._menu.popup();
-
-        return false;
-    },
-
-    activateWindow: function(metaWindow) {
-        if (metaWindow) {
-            Main.activateWindow(metaWindow);
-        } else {
-            Main.overview.hide();
-        }
-    },
-
-    _onMenuPoppedDown: function() {
-        this._button.sync_hover();
-    }
-
-};
-*/
-
-
 EventItem.prototype = {
     _init: function (event, multi_select, journal_layout) {
         if (!event)
@@ -463,6 +255,11 @@ EventItem.prototype = {
         this._closeButton.set_position (Math.floor(this._closeButton.x), Math.floor(this._closeButton.y));
     },
 
+    _disconnectSignals: function() {
+        this._menu.close();
+        Main.overview.disconnect(this._overviewHidingId);
+    },
+
     _popupMenu: function() {
         this._removeMenuTimeout();
         this._button.fake_release();
@@ -475,7 +272,8 @@ EventItem.prototype = {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
             }));
-            Main.overview.connect('hiding', Lang.bind(this, function () { this._menu.close(); }));
+            
+            this._overviewHidingId = Main.overview.connect('hiding', Lang.bind(this, function () { this._disconnectSignals();}));
 
             this._menuManager.addMenu(this._menu);
         }
@@ -486,7 +284,7 @@ EventItem.prototype = {
 
         return false;
     },
-
+    
     activateWindow: function(metaWindow) {
         if (metaWindow) {
             Main.activateWindow(metaWindow);
@@ -1613,39 +1411,25 @@ OtherCategory.prototype = {
 
 
 let journalView;
+let viewTab;
+let tabIndex;
 
 function init(metadata)
 {
     imports.gettext.bindtextdomain('gnome-shell-extensions', metadata.localedir);
-    journalView = new JournalDisplay();
 }
 
 function enable() {
+    journalView = new JournalDisplay();
     Main.overview._viewSelector.addViewTab('journal', _("Journal"), journalView.actor, 'history');
+    viewTab = Main.overview._viewSelector._tabs[Main.overview._viewSelector._tabs.length-1];
+    tabIndex = Main.overview._viewSelector._tabs.length - 1;
 }
 
 function disable() {
-    
+    Main.overview._viewSelector._tabBox.remove_actor(viewTab.title);
+    Main.overview._viewSelector._pageArea.remove_actor(viewTab.page);
+    Main.overview._viewSelector._tabs.splice(tabIndex, tabIndex);
+    journalView.actor.destroy();
+    journalView = undefined
 }
-
-// TODO
-//
-// * Make icons reactive; single-click or right-click to get a Largo-like set of actions; double-click to launch
-//     Open with...
-//     Show in file manager
-//     --------------------
-//     Remove from journal
-//     Move to trash
-//
-// * Sort events when we get them (hmm, maybe Zeitgeist already does that for us)
-//
-// * isearch like in Emacs
-//
-// * Big Fat Eraser mode, like in gnome-activity-journal
-//
-
-// Each Query will generate a ResultSection
-//
-// Each ResultSection has a JournalLayout, which is populated by a LayoutBy*
-//
-// MAKE A DRAWING OF THIS - does it look pretty?
