@@ -42,9 +42,7 @@ function AppLauncher () {
 AppLauncher.prototype = {
     _init: function() {
         this.iconSize = 16;
-       
-        this.display = new AppLauncherIcon()
-        
+        this.display = new AppLauncherIcon();
         this.dashItem = new DashItemContainer();
         
         this.actor = this.dashItem.actor;
@@ -65,8 +63,8 @@ AppLauncher.prototype = {
             Main.overview._viewSelector.switchTab("windows");
             this.display.actor.remove_style_class_name('running');
         }
-        this._toggled = active
-        this.display.actor.set_checked(active)
+        this._toggled = active;
+        this.display.actor.set_checked(active);
     },
 
     _onButtonPress: function(actor, event) {

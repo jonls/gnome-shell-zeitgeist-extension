@@ -1,7 +1,7 @@
 {
  "uuid": "hugo@gnome-shell-extensions.zeitgeist-project.com",
  "name": "Hugo",
- "description": "Some face lifting and prototyping for what the next Shell might look like",
+ "description": "Some face lifting and prototyping for what the next Shell might look like, getting rid of the tab view",
  "shell-version": [ "3.2" ],
  "localedir": "/usr/local/share/locale",
  "url": "http://git.gnome.org/gnome-shell-extensions"
